@@ -18,45 +18,7 @@ const stripEmojis = (str: string): string => {
   return str.replace(/[\u{1F300}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F1E6}-\u{1F1FF}]/gu, "").trim();
 };
 
-const getLandmarkStyle = (label: string) => {
-  const lbl = label.toLowerCase();
-  
-  if (lbl.includes("block") || lbl.includes("hostel") || lbl.includes("hall") || /\d+(st|nd|rd|th)/.test(lbl)) {
-    return {
-      textColor: "text-[#007fb4]", // OSM blue
-      icon: "🏨", // bed symbol
-      borderColor: "border-[#007fb4]/30"
-    };
-  }
-  if (lbl.includes("food") || lbl.includes("court") || lbl.includes("mess") || lbl.includes("canteen") || lbl.includes("annapoorna") || lbl.includes("fc1") || lbl.includes("fc2")) {
-    return {
-      textColor: "text-[#c27200]", // OSM orange/brown
-      icon: "🍴", // fork/knife symbol
-      borderColor: "border-[#c27200]/30"
-    };
-  }
-  if (lbl.includes("pitch") || lbl.includes("court") || lbl.includes("tennis") || lbl.includes("recreation") || lbl.includes("club") || lbl.includes("ground") || lbl.includes("gym") || lbl.includes("sports")) {
-    return {
-      textColor: "text-[#2d8a4e]", // OSM green
-      icon: "🏃", // runner symbol
-      borderColor: "border-[#2d8a4e]/30"
-    };
-  }
-  if (lbl.includes("temple") || lbl.includes("shrine")) {
-    return {
-      textColor: "text-[#654321]", // dark brown
-      icon: "🕉️",
-      borderColor: "border-[#654321]/30"
-    };
-  }
-  
-  // Default academic/misc block
-  return {
-    textColor: "text-[#374151]", // slate grey
-    icon: "🏢", // building symbol
-    borderColor: "border-slate-300"
-  };
-};
+
 
 export default function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -219,27 +181,25 @@ export default function App() {
       }
     });
 
-    // 2. Draw nodes & landmarks (Only render landmarks to avoid cluttering OSM base map)
+    // 2. Draw nodes & landmarks (Only render landmarks as clean dots with hover tooltips)
     nodes.forEach((n) => {
       const isLandmark = n.label && n.label !== "Unknown";
       if (!isLandmark) return;
 
-      const style = getLandmarkStyle(n.label);
-      const customIcon = L.divIcon({
-        className: "osm-landmark",
-        html: `
-          <div class="flex items-center space-x-1 bg-white/90 px-1.5 py-0.5 rounded border ${style.borderColor} shadow-sm whitespace-nowrap select-none">
-            <span class="text-xs">${style.icon}</span>
-            <span class="text-[10px] font-bold ${style.textColor} tracking-tight">${n.label}</span>
-          </div>
-        `,
-        iconSize: [0, 0],
-        iconAnchor: [30, 10]
+      const circle = L.circleMarker([n.y, n.x], {
+        radius: 4,
+        color: "#0288d1", 
+        fillColor: "#0288d1",
+        fillOpacity: 0.5,
+        weight: 1
+      }).addTo(markersGroup);
+
+      circle.bindTooltip(n.label, {
+        permanent: false, 
+        direction: "top"
       });
 
-      const marker = L.marker([n.y, n.x], { icon: customIcon }).addTo(markersGroup);
-
-      marker.on("click", (e: any) => {
+      circle.on("click", (e: any) => {
         L.DomEvent.stopPropagation(e);
         handleNodeSelection(n.id);
       });
@@ -460,18 +420,20 @@ export default function App() {
     <div className="min-h-screen max-h-screen h-screen bg-white text-slate-800 font-sans flex flex-col antialiased overflow-hidden">
       
       {/* Header / Navbar */}
-      <header className="max-w-5xl w-full mx-auto px-6 py-4 flex items-center justify-between border-b border-dashed border-slate-200 flex-shrink-0">
+      <header className="max-w-5xl w-full mx-auto px-6 py-4 flex items-center justify-between border-b border-slate-200 flex-shrink-0">
         <div className="flex items-center space-x-2">
-          <span className="text-2xl font-serif-custom font-bold text-slate-900 tracking-tight">MIT Route Planner</span>
+          <span className="text-lg font-bold text-slate-900 tracking-tight">MIT Route Planner</span>
         </div>
 
-        <nav className="flex items-center space-x-6 text-xs font-semibold text-slate-500">
-          <div className="relative py-0.5 flex flex-col items-center select-none cursor-pointer">
-            <span className="text-slate-950 font-bold">Home</span>
-            <span className="absolute bottom-[-6px] w-1 h-1 bg-slate-950 rounded-full"></span>
-          </div>
-          <span className="hover:text-slate-900 transition-colors cursor-pointer">Benchmarks</span>
-          <span className="hover:text-slate-900 transition-colors cursor-pointer">Documentation</span>
+        <nav className="flex items-center space-x-6 text-xs font-bold text-slate-500">
+          <a 
+            href="https://github.com/ayatinkering/Astar-Campus-Route-Planning" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="hover:text-slate-950 transition-colors"
+          >
+            Code
+          </a>
           <span className="text-slate-300">|</span>
           <span className="text-slate-600 hover:text-slate-900 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-3.5 h-3.5">
@@ -484,58 +446,38 @@ export default function App() {
       {/* Main Single Column Layout */}
       <main className="flex-1 max-w-5xl w-full mx-auto px-6 py-4 flex flex-col space-y-4 overflow-hidden min-h-0">
         
-        {/* Selection overlay (above the map) */}
-        <div className="flex flex-col space-y-2 py-0 flex-shrink-0">
-          <h2 className="text-xl font-serif-custom font-bold tracking-tight text-slate-900">
-            Route Planner
-          </h2>
-          
-          <div className="flex items-center justify-between text-xs text-slate-600">
-            <div className="flex items-center space-x-8">
-              <div>
-                <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Start Location</span>
-                <span className="font-serif-custom text-slate-900 text-lg font-medium mt-0.5 block">
-                  {startLandmark ? startLandmark.label : "Click a point on the map"}
-                </span>
-              </div>
-              <div className="text-slate-300 font-bold text-base">➔</div>
-              <div>
-                <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Goal Destination</span>
-                <span className="font-serif-custom text-slate-900 text-lg font-medium mt-0.5 block">
-                  {goalLandmark ? goalLandmark.label : "Click a point on the map"}
-                </span>
-              </div>
-            </div>
-            {(startNode || goalNode) && (
-              <button 
-                onClick={() => { setStartNode(""); setGoalNode(""); setPaths({ Astar: [], BFS: [], DFS: [] }); }}
-                className="text-[11px] hover:text-slate-900 text-slate-400 underline underline-offset-4 decoration-dashed cursor-pointer font-bold"
-                title="Reset Selection"
-              >
-                Reset Route
-              </button>
-            )}
-          </div>
-        </div>
-
         {/* Detailed Leaflet Map Container */}
-        <div className="flex-1 min-h-[250px] border border-slate-200 rounded-lg overflow-hidden relative">
+        <div className="flex-1 min-h-[350px] border border-slate-200 rounded-lg overflow-hidden relative">
           <div 
             ref={mapContainerRef} 
             className="w-full h-full"
           ></div>
         </div>
 
-        <div className="h-px border-b border-dashed border-slate-200 flex-shrink-0"></div>
-
         {/* Benchmark & Control Panel */}
-        <div className="flex flex-col space-y-3 flex-shrink-0 min-h-0">
+        <div className="flex flex-col space-y-3 flex-shrink-0 min-h-0 pt-2">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h3 className="text-xl font-serif-custom font-bold tracking-tight text-slate-900">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900">
                 Map Controls & Benchmark
               </h3>
-              <p className="text-[10px] text-slate-400 font-medium leading-normal max-w-md">
+              
+              {/* Selections inline */}
+              <div className="text-[11px] text-slate-500 font-semibold mt-1 flex flex-wrap items-center gap-2">
+                <span>Start: <span className="text-slate-950 font-bold">{startLandmark ? startLandmark.label : "[Click map]"}</span></span>
+                <span className="text-slate-300">➔</span>
+                <span>Goal: <span className="text-slate-950 font-bold">{goalLandmark ? goalLandmark.label : "[Click map]"}</span></span>
+                {(startNode || goalNode) && (
+                  <button 
+                    onClick={() => { setStartNode(""); setGoalNode(""); setPaths({ Astar: [], BFS: [], DFS: [] }); }}
+                    className="text-[10px] text-slate-400 hover:text-slate-900 underline cursor-pointer ml-1 font-bold"
+                  >
+                    Clear Selection
+                  </button>
+                )}
+              </div>
+              
+              <p className="text-[10px] text-slate-400 font-medium leading-normal mt-1 max-w-md">
                 Define endpoints via map clicks. Trigger animations to analyze expansion paths or run comparative benchmarks.
               </p>
             </div>
@@ -603,10 +545,10 @@ export default function App() {
 
           {/* Benchmark Results Table */}
           {benchmarkResults ? (
-            <div className="overflow-y-auto max-h-[120px] border border-dashed border-slate-200 rounded pt-1">
+            <div className="overflow-y-auto max-h-[120px] border border-slate-200 rounded pt-1">
               <table className="min-w-full text-left text-xs text-slate-600">
                 <thead>
-                  <tr className="border-b border-dashed border-slate-200 text-[9px] text-slate-400 uppercase tracking-wider">
+                  <tr className="border-b border-slate-200 text-[9px] text-slate-400 uppercase tracking-wider">
                     <th className="py-1.5 px-3">Algorithm</th>
                     <th className="py-1.5 px-3">Avg Compute Speed</th>
                     <th className="py-1.5 px-3">Avg Path Cost (Distance)</th>
@@ -614,10 +556,10 @@ export default function App() {
                     <th className="py-1.5 px-3">Optimality Rating</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-dashed divide-slate-100 font-medium">
+                <tbody className="divide-y divide-slate-100 font-medium">
                   {benchmarkResults.map(res => (
                     <tr key={`benchmark-row-${res.name}`} className="hover:bg-slate-50/30">
-                      <td className="py-2 px-3 font-serif-custom text-sm font-bold text-slate-900">{res.name}</td>
+                      <td className="py-2 px-3 text-xs font-bold text-slate-900">{res.name}</td>
                       <td className="py-2 px-3 font-mono text-[11px]">{res.avgTime.toFixed(4)} ms</td>
                       <td className="py-2 px-3 font-mono text-[11px]">{res.avgCost.toFixed(2)} m</td>
                       <td className="py-2 px-3 font-mono text-[11px]">{res.avgLength.toFixed(1)} nodes</td>
@@ -647,7 +589,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="py-3 border-t border-dashed border-slate-200 bg-white text-center text-[9px] text-slate-400 font-mono tracking-wider flex-shrink-0">
+      <footer className="py-3 border-t border-slate-200 bg-white text-center text-[9px] text-slate-400 font-mono tracking-wider flex-shrink-0">
         MIT Campus Routing Dashboard &bull; A* vs BFS vs DFS Comparative Analysis
       </footer>
 
