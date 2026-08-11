@@ -2,7 +2,6 @@ import os
 import json
 import math
 import networkx as nx
-import matplotlib.pyplot as plt
 from pyproj import Transformer
 from geopy.distance import geodesic
 from src.config import SRC_CRS, DST_CRS
@@ -165,6 +164,7 @@ def visualize_labeled_map(G, output_img_path):
     Draws the full graph network, highlights nodes with valid landmark labels,
     and annotations on top. Saves the map to the target path.
     """
+    import matplotlib.pyplot as plt
     # Extract node positions
     pos = {
         node: (float(data["x"]), float(data["y"]))
