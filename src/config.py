@@ -3,6 +3,8 @@ import os
 # Base Directories
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "data")
+if not os.path.exists(DATA_DIR) or not os.path.exists(os.path.join(DATA_DIR, "mit_labeled.graphml")):
+    DATA_DIR = os.path.join(BASE_DIR, "api", "data")
 
 # Input/Output Graph Paths
 RAW_GRAPH_PATH = os.path.join(DATA_DIR, "mit_campus.graphml")
