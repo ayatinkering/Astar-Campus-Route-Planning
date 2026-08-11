@@ -1,10 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import L from "leaflet";
 import { 
-  Navigation, 
   Clock, 
-  MapPin, 
-  RotateCcw, 
   Play
 } from "lucide-react";
 
@@ -456,86 +453,91 @@ export default function App() {
     );
   }
 
-  const landmarks = nodes.filter(n => n.label && n.label !== "Unknown");
   const startLandmark = nodesMap[startNode];
   const goalLandmark = nodesMap[goalNode];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col antialiased">
+    <div className="min-h-screen bg-white text-slate-800 font-sans flex flex-col antialiased">
       
-      {/* Header */}
-      <header className="sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="text-slate-600">
-            <Navigation className="w-5 h-5" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-slate-900 tracking-tight">
-              MIT Campus Route Planner
-            </h1>
-            <p className="text-xs font-semibold text-slate-500">Manipal Institute of Technology</p>
-          </div>
+      {/* Header / Navbar */}
+      <header className="max-w-5xl w-full mx-auto px-6 py-6 flex items-center justify-between border-b border-dashed border-slate-200">
+        <div className="flex items-center space-x-2">
+          <span className="text-2xl font-serif-custom font-bold text-slate-900">MIT Route Planner</span>
         </div>
 
-        <div className="flex items-center space-x-4 text-xs font-medium text-slate-500">
-          <div>
-            <span className="block text-right font-bold text-slate-700">{landmarks.length}</span>
-            <span>Landmarks</span>
+        <nav className="flex items-center space-x-6 text-sm font-medium text-slate-500">
+          <div className="relative py-1 flex flex-col items-center select-none cursor-pointer">
+            <span className="text-slate-950 font-bold">Home</span>
+            <span className="absolute bottom-[-6px] w-1.5 h-1.5 bg-slate-950 rounded-full"></span>
           </div>
-          <div>
-            <span className="block text-right font-bold text-slate-700">{edges.length}</span>
-            <span>Road Segments</span>
-          </div>
-        </div>
+          <span className="hover:text-slate-900 transition-colors cursor-pointer">Benchmarks</span>
+          <span className="hover:text-slate-900 transition-colors cursor-pointer">Documentation</span>
+          <span className="text-slate-300">|</span>
+          <span className="text-slate-600 hover:text-slate-900 cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-3.5 h-3.5">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          </span>
+        </nav>
       </header>
 
       {/* Main Single Column Layout */}
-      <main className="flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col space-y-4">
+      <main className="flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col space-y-8">
         
         {/* Selection overlay (above the map) */}
-        <div className="flex items-center justify-between text-xs text-slate-600 px-1 py-1">
-          <div className="flex items-center space-x-6">
-            <div>
-              <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Start Node</span>
-              <span className="font-semibold text-slate-800 flex items-center gap-1.5 mt-0.5">
-                <MapPin className="w-3.5 h-3.5 text-emerald-600" /> {startLandmark ? startLandmark.label : "Click a node on map"}
-              </span>
+        <div className="flex flex-col space-y-3 py-1">
+          <h2 className="text-2xl font-serif-custom font-bold tracking-tight text-slate-900">
+            Route Planner
+          </h2>
+          
+          <div className="flex items-center justify-between text-xs text-slate-600">
+            <div className="flex items-center space-x-8">
+              <div>
+                <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Start Location</span>
+                <span className="font-serif-custom text-slate-900 text-lg font-medium mt-0.5 block">
+                  {startLandmark ? startLandmark.label : "Click a point on the map"}
+                </span>
+              </div>
+              <div className="text-slate-300 font-bold text-lg">➔</div>
+              <div>
+                <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Goal Destination</span>
+                <span className="font-serif-custom text-slate-900 text-lg font-medium mt-0.5 block">
+                  {goalLandmark ? goalLandmark.label : "Click a point on the map"}
+                </span>
+              </div>
             </div>
-            <div className="text-slate-300 font-bold">➔</div>
-            <div>
-              <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Goal Node</span>
-              <span className="font-semibold text-slate-800 flex items-center gap-1.5 mt-0.5">
-                <MapPin className="w-3.5 h-3.5 text-red-500" /> {goalLandmark ? goalLandmark.label : "Click a node on map"}
-              </span>
-            </div>
+            {(startNode || goalNode) && (
+              <button 
+                onClick={() => { setStartNode(""); setGoalNode(""); setPaths({ Astar: [], BFS: [], DFS: [] }); }}
+                className="text-xs hover:text-slate-900 text-slate-400 underline underline-offset-4 decoration-dashed cursor-pointer font-medium"
+                title="Reset Selection"
+              >
+                Reset Route
+              </button>
+            )}
           </div>
-          {(startNode || goalNode) && (
-            <button 
-              onClick={() => { setStartNode(""); setGoalNode(""); setPaths({ Astar: [], BFS: [], DFS: [] }); }}
-              className="p-1 hover:text-slate-600 text-slate-400 rounded transition-colors cursor-pointer"
-              title="Reset Route"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </button>
-          )}
         </div>
 
         {/* Detailed Leaflet Map Container */}
-        <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col relative shadow-sm overflow-hidden h-[550px]">
+        <div className="border border-slate-200 rounded-lg overflow-hidden h-[500px]">
           <div 
             ref={mapContainerRef} 
-            className="w-full h-full rounded-lg"
+            className="w-full h-full"
           ></div>
         </div>
 
+        <div className="h-px border-b border-dashed border-slate-200"></div>
+
         {/* Benchmark & Control Panel */}
-        <div className="flex flex-col space-y-4 pt-2">
+        <div className="flex flex-col space-y-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Map Navigation & Benchmark Controls
+              <h3 className="text-2xl font-serif-custom font-bold tracking-tight text-slate-900">
+                Map Controls & Benchmark
               </h3>
-              <p className="text-[10px] text-slate-400 font-medium">Select start and destination by clicking nodes on the map. Use the control buttons to animate computed paths or run benchmarks.</p>
+              <p className="text-xs text-slate-400 mt-1 font-medium max-w-xl leading-relaxed">
+                Click map nodes to define parameters. Use animation overlays to inspect search space expansions or run multi-trial empirical benchmarks.
+              </p>
             </div>
 
             {/* Animation & Benchmark Action Buttons */}
@@ -582,7 +584,7 @@ export default function App() {
                 className={`py-2 px-4 rounded-lg text-xs font-bold tracking-wide uppercase transition-all flex items-center gap-2 ${
                   benchmarking 
                     ? "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200" 
-                    : "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+                    : "bg-slate-950 hover:bg-slate-800 text-white cursor-pointer"
                 }`}
               >
                 {benchmarking ? (
@@ -602,9 +604,9 @@ export default function App() {
           {/* Benchmark Results Table */}
           {benchmarkResults ? (
             <div className="overflow-x-auto pt-2">
-              <table className="min-w-full text-left text-xs text-slate-500 font-medium">
+              <table className="min-w-full text-left text-xs text-slate-600">
                 <thead>
-                  <tr className="text-[10px] text-slate-400 uppercase tracking-wider">
+                  <tr className="border-b border-dashed border-slate-200 text-[10px] text-slate-400 uppercase tracking-wider">
                     <th className="py-2.5 px-3">Algorithm</th>
                     <th className="py-2.5 px-3">Avg Compute Speed</th>
                     <th className="py-2.5 px-3">Avg Path Cost (Distance)</th>
@@ -612,18 +614,18 @@ export default function App() {
                     <th className="py-2.5 px-3">Optimality Rating</th>
                   </tr>
                 </thead>
-                <tbody className="text-slate-700 font-semibold">
+                <tbody className="divide-y divide-dashed divide-slate-100 font-medium">
                   {benchmarkResults.map(res => (
-                    <tr key={`benchmark-row-${res.name}`}>
-                      <td className="py-3 px-3 font-bold text-slate-800">{res.name}</td>
+                    <tr key={`benchmark-row-${res.name}`} className="hover:bg-slate-50/30">
+                      <td className="py-3 px-3 font-serif-custom text-sm font-bold text-slate-900">{res.name}</td>
                       <td className="py-3 px-3 font-mono">{res.avgTime.toFixed(4)} ms</td>
                       <td className="py-3 px-3 font-mono">{res.avgCost.toFixed(2)} m</td>
                       <td className="py-3 px-3 font-mono">{res.avgLength.toFixed(1)} nodes</td>
                       <td className="py-3 px-3">
                         <span className={`text-[10px] py-0.5 px-2 rounded font-bold border ${
-                          res.name === "A*" ? "bg-blue-50 text-blue-600 border-blue-100" :
-                          res.name === "BFS" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                          "bg-amber-50 text-amber-600 border-amber-100"
+                          res.name === "A*" ? "bg-blue-50/50 text-blue-600 border-blue-100" :
+                          res.name === "BFS" ? "bg-emerald-50/50 text-emerald-600 border-emerald-100" :
+                          "bg-amber-50/50 text-amber-600 border-amber-100"
                         }`}>
                           {res.name === "A*" ? "Optimal" : res.name === "BFS" ? "Suboptimal" : "Poor"}
                         </span>
@@ -634,9 +636,9 @@ export default function App() {
               </table>
             </div>
           ) : (
-            <div className="py-6 flex flex-col items-center justify-center text-xs text-slate-400">
-              <Clock className="w-6 h-6 text-slate-300 mb-1.5" />
-              <span>No benchmark records. Click "Run Benchmark" to fetch performance comparisons.</span>
+            <div className="py-8 flex flex-col items-center justify-center text-xs text-slate-400">
+              <Clock className="w-5 h-5 text-slate-300 mb-2" />
+              <span className="font-medium">No benchmark records. Click "Run Benchmark" to fetch performance comparisons.</span>
             </div>
           )}
 
@@ -645,7 +647,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="py-4 text-center text-[10px] text-slate-400 font-mono tracking-wider">
+      <footer className="py-8 border-t border-dashed border-slate-200 bg-white text-center text-[10px] text-slate-400 font-mono tracking-wider">
         MIT Campus Routing Dashboard &bull; A* vs BFS vs DFS Comparative Analysis
       </footer>
 
