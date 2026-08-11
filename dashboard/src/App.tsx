@@ -404,6 +404,16 @@ export default function App() {
       });
   };
 
+  const tableRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (benchmarkResults && tableRef.current) {
+      setTimeout(() => {
+        tableRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    }
+  }, [benchmarkResults]);
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 text-slate-600">
@@ -417,10 +427,10 @@ export default function App() {
   const goalLandmark = nodesMap[goalNode];
 
   return (
-    <div className="min-h-screen max-h-screen h-screen bg-white text-slate-800 font-sans flex flex-col antialiased overflow-hidden">
+    <div className="min-h-screen bg-white text-slate-800 font-sans flex flex-col antialiased">
       
       {/* Header / Navbar */}
-      <header className="max-w-5xl w-full mx-auto px-6 py-4 flex items-center justify-between border-b border-slate-200 flex-shrink-0">
+      <header className="w-full px-8 py-4 flex items-center justify-between border-b border-slate-200 flex-shrink-0">
         <div className="flex items-center space-x-2">
           <span className="text-lg font-bold text-slate-900 tracking-tight">MIT Route Planner</span>
         </div>
@@ -444,10 +454,10 @@ export default function App() {
       </header>
 
       {/* Main Single Column Layout */}
-      <main className="flex-1 max-w-5xl w-full mx-auto px-6 py-4 flex flex-col space-y-4 overflow-hidden min-h-0">
+      <main className="flex-1 w-full px-8 py-6 flex flex-col space-y-6">
         
         {/* Detailed Leaflet Map Container */}
-        <div className="flex-1 min-h-[350px] border border-slate-200 rounded-lg overflow-hidden relative">
+        <div className="w-full h-[550px] border border-slate-200 rounded-lg overflow-hidden relative flex-shrink-0">
           <div 
             ref={mapContainerRef} 
             className="w-full h-full"
@@ -455,27 +465,47 @@ export default function App() {
         </div>
 
         {/* Benchmark & Control Panel */}
-        <div className="flex flex-col space-y-3 flex-shrink-0 min-h-0 pt-2">
+        <div className="flex flex-col space-y-3 flex-shrink-0">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900">
+              <h3 className="text-sm font-bold text-slate-900">
                 Map Controls & Benchmark
               </h3>
               
-              {/* Selections inline */}
-              <div className="text-[11px] text-slate-500 font-semibold mt-1 flex flex-wrap items-center gap-2">
-                <span>Start: <span className="text-slate-950 font-bold">{startLandmark ? startLandmark.label : "[Click map]"}</span></span>
-                <span className="text-slate-300">➔</span>
-                <span>Goal: <span className="text-slate-950 font-bold">{goalLandmark ? goalLandmark.label : "[Click map]"}</span></span>
-                {(startNode || goalNode) && (
-                  <button 
-                    onClick={() => { setStartNode(""); setGoalNode(""); setPaths({ Astar: [], BFS: [], DFS: [] }); }}
-                    className="text-[10px] text-slate-400 hover:text-slate-900 underline cursor-pointer ml-1 font-bold"
-                  >
-                    Clear Selection
-                  </button>
-                )}
-              </div>
+              {/* Selections inline conditional */}
+              {startNode ? (
+                <div className="text-[11px] text-slate-500 font-semibold mt-1 flex flex-wrap items-center gap-1">
+                  <span>Start: <span className="text-slate-950 font-bold">{startLandmark ? startLandmark.label : startNode}</span></span>
+                  
+                  {goalNode ? (
+                    <>
+                      <span className="text-slate-300 px-1">➔</span>
+                      <span>Goal: <span className="text-slate-950 font-bold">{goalLandmark ? goalLandmark.label : goalNode}</span></span>
+                      <button 
+                        onClick={() => { setStartNode(""); setGoalNode(""); setPaths({ Astar: [], BFS: [], DFS: [] }); }}
+                        className="text-[10px] text-slate-400 hover:text-slate-900 underline cursor-pointer ml-2 font-bold"
+                      >
+                        Clear Selection
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-slate-300 px-1">➔</span>
+                      <span>Goal: <span className="text-slate-400 font-normal italic">[Click map for Goal]</span></span>
+                      <button 
+                        onClick={() => { setStartNode(""); setGoalNode(""); setPaths({ Astar: [], BFS: [], DFS: [] }); }}
+                        className="text-[10px] text-slate-400 hover:text-slate-900 underline cursor-pointer ml-2 font-bold"
+                      >
+                        Clear Selection
+                      </button>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <div className="text-[11px] text-slate-400 font-medium italic mt-1">
+                  [Click map to select start location]
+                </div>
+              )}
               
               <p className="text-[10px] text-slate-400 font-medium leading-normal mt-1 max-w-md">
                 Define endpoints via map clicks. Trigger animations to analyze expansion paths or run comparative benchmarks.
@@ -487,7 +517,7 @@ export default function App() {
               <button
                 disabled={!paths.Astar || paths.Astar.length === 0}
                 onClick={() => triggerAnimation("Astar")}
-                className={`py-1.5 px-2.5 border rounded text-[11px] font-bold uppercase transition-all ${
+                className={`py-1.5 px-2.5 border rounded text-[11px] font-bold transition-all ${
                   paths.Astar && paths.Astar.length > 0
                     ? "border-[#1a73e8] text-[#1a73e8] bg-blue-50/20 hover:bg-blue-50/40 cursor-pointer"
                     : "border-slate-200 bg-slate-50/50 text-slate-400 cursor-not-allowed"
@@ -498,7 +528,7 @@ export default function App() {
               <button
                 disabled={!paths.BFS || paths.BFS.length === 0}
                 onClick={() => triggerAnimation("BFS")}
-                className={`py-1.5 px-2.5 border rounded text-[11px] font-bold uppercase transition-all ${
+                className={`py-1.5 px-2.5 border rounded text-[11px] font-bold transition-all ${
                   paths.BFS && paths.BFS.length > 0
                     ? "border-[#1e8e3e] text-[#1e8e3e] bg-emerald-50/20 hover:bg-emerald-50/40 cursor-pointer"
                     : "border-slate-200 bg-slate-50/50 text-slate-400 cursor-not-allowed"
@@ -509,7 +539,7 @@ export default function App() {
               <button
                 disabled={!paths.DFS || paths.DFS.length === 0}
                 onClick={() => triggerAnimation("DFS")}
-                className={`py-1.5 px-2.5 border rounded text-[11px] font-bold uppercase transition-all ${
+                className={`py-1.5 px-2.5 border rounded text-[11px] font-bold transition-all ${
                   paths.DFS && paths.DFS.length > 0
                     ? "border-[#f9ab00] text-[#b07800] bg-amber-50/20 hover:bg-amber-50/40 cursor-pointer"
                     : "border-slate-200 bg-slate-50/50 text-slate-400 cursor-not-allowed"
@@ -518,12 +548,10 @@ export default function App() {
                 Animate DFS
               </button>
 
-              <div className="w-px h-6 bg-slate-200 mx-1 hidden md:block"></div>
-
               <button
                 disabled={benchmarking}
                 onClick={triggerBenchmark}
-                className={`py-1.5 px-3 rounded text-[11px] font-bold tracking-wide uppercase transition-all flex items-center gap-2 ${
+                className={`py-1.5 px-3 rounded text-[11px] font-bold transition-all flex items-center gap-2 ${
                   benchmarking 
                     ? "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200" 
                     : "bg-slate-950 hover:bg-slate-800 text-white cursor-pointer"
@@ -531,7 +559,7 @@ export default function App() {
               >
                 {benchmarking ? (
                   <>
-                    <div className="w-3 h-3 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-3.5 h-3.5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div>
                     Running...
                   </>
                 ) : (
@@ -545,15 +573,15 @@ export default function App() {
 
           {/* Benchmark Results Table */}
           {benchmarkResults ? (
-            <div className="overflow-y-auto max-h-[120px] border border-slate-200 rounded pt-1">
+            <div ref={tableRef} className="border border-slate-200 rounded pt-1 mt-2">
               <table className="min-w-full text-left text-xs text-slate-600">
                 <thead>
-                  <tr className="border-b border-slate-200 text-[9px] text-slate-400 uppercase tracking-wider">
-                    <th className="py-1.5 px-3">Algorithm</th>
-                    <th className="py-1.5 px-3">Avg Compute Speed</th>
-                    <th className="py-1.5 px-3">Avg Path Cost (Distance)</th>
-                    <th className="py-1.5 px-3">Avg Hops (Nodes)</th>
-                    <th className="py-1.5 px-3">Optimality Rating</th>
+                  <tr className="border-b border-slate-200 text-[9px] text-slate-400">
+                    <th className="py-2 px-3">Algorithm</th>
+                    <th className="py-2 px-3">Avg Compute Speed</th>
+                    <th className="py-2 px-3">Avg Path Cost (Distance)</th>
+                    <th className="py-2 px-3">Avg Hops (Nodes)</th>
+                    <th className="py-2 px-3">Optimality Rating</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 font-medium">
