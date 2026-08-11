@@ -26,7 +26,8 @@ export default function App() {
   const [edges, setEdges] = useState<CampusEdge[]>([]);
   const [nodesMap, setNodesMap] = useState<Record<string, CampusNode>>({});
   
-  // Selection states
+  // Theme & Selection states
+  const [darkMode, setDarkMode] = useState<boolean>(false);
   const [startNode, setStartNode] = useState<string>("");
   const [goalNode, setGoalNode] = useState<string>("");
   const heuristic = "euclidean";
@@ -427,29 +428,43 @@ export default function App() {
   const goalLandmark = nodesMap[goalNode];
 
   return (
-    <div className="min-h-screen bg-white text-slate-800 font-sans flex flex-col antialiased">
+    <div className={`min-h-screen flex flex-col font-sans antialiased transition-colors duration-200 ${
+      darkMode 
+        ? "bg-slate-950 text-slate-100 dark" 
+        : "bg-white text-slate-800"
+    }`}>
       
       {/* Header / Navbar */}
-      <header className="w-full px-8 py-4 flex items-center justify-between border-b border-slate-200 flex-shrink-0">
+      <header className="w-full px-8 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
         <div className="flex items-center space-x-2">
-          <span className="text-lg font-bold text-slate-900 tracking-tight">MIT Route Planner</span>
+          <span className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">MIT Route Planner</span>
         </div>
 
-        <nav className="flex items-center space-x-6 text-xs font-bold text-slate-500">
+        <nav className="flex items-center space-x-6 text-xs font-bold text-slate-500 dark:text-slate-400">
           <a 
             href="https://github.com/ayatinkering/Astar-Campus-Route-Planning" 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="hover:text-slate-950 transition-colors"
+            className="hover:text-slate-950 dark:hover:text-white transition-colors"
           >
             Code
           </a>
-          <span className="text-slate-300">|</span>
-          <span className="text-slate-600 hover:text-slate-900 cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-3.5 h-3.5">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-            </svg>
-          </span>
+          <span className="text-slate-300 dark:text-slate-800">|</span>
+          <button 
+            onClick={() => setDarkMode(!darkMode)}
+            className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white cursor-pointer focus:outline-none"
+            title="Toggle Theme"
+          >
+            {darkMode ? (
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-3.5 h-3.5">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707-.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-3.5 h-3.5">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+            )}
+          </button>
         </nav>
       </header>
 
@@ -457,7 +472,7 @@ export default function App() {
       <main className="flex-1 w-full px-8 py-6 flex flex-col space-y-6">
         
         {/* Detailed Leaflet Map Container */}
-        <div className="w-full h-[550px] border border-slate-200 rounded-lg overflow-hidden relative flex-shrink-0">
+        <div className="w-full h-[550px] border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden relative flex-shrink-0">
           <div 
             ref={mapContainerRef} 
             className="w-full h-full"
@@ -468,46 +483,42 @@ export default function App() {
         <div className="flex flex-col space-y-3 flex-shrink-0">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h3 className="text-sm font-bold text-slate-900">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">
                 Map Controls & Benchmark
               </h3>
               
               {/* Selections inline conditional */}
-              {startNode ? (
-                <div className="text-[11px] text-slate-500 font-semibold mt-1 flex flex-wrap items-center gap-1">
-                  <span>Start: <span className="text-slate-950 font-bold">{startLandmark ? startLandmark.label : startNode}</span></span>
+              {startNode && (
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-1 flex flex-wrap items-center gap-1">
+                  <span>Start: <span className="text-slate-950 dark:text-white font-bold">{startLandmark ? startLandmark.label : startNode}</span></span>
                   
                   {goalNode ? (
                     <>
-                      <span className="text-slate-300 px-1">➔</span>
-                      <span>Goal: <span className="text-slate-950 font-bold">{goalLandmark ? goalLandmark.label : goalNode}</span></span>
+                      <span className="text-slate-300 dark:text-slate-800 px-1">➔</span>
+                      <span>Goal: <span className="text-slate-950 dark:text-white font-bold">{goalLandmark ? goalLandmark.label : goalNode}</span></span>
                       <button 
                         onClick={() => { setStartNode(""); setGoalNode(""); setPaths({ Astar: [], BFS: [], DFS: [] }); }}
-                        className="text-[10px] text-slate-400 hover:text-slate-900 underline cursor-pointer ml-2 font-bold"
+                        className="text-[10px] text-slate-400 hover:text-slate-900 dark:text-slate-500 dark:hover:text-white underline cursor-pointer ml-2 font-bold"
                       >
                         Clear Selection
                       </button>
                     </>
                   ) : (
                     <>
-                      <span className="text-slate-300 px-1">➔</span>
-                      <span>Goal: <span className="text-slate-400 font-normal italic">[Click map for Goal]</span></span>
+                      <span className="text-slate-300 dark:text-slate-800 px-1">➔</span>
+                      <span>Goal: <span className="text-slate-400 dark:text-slate-600 font-normal italic">[Click map for Goal]</span></span>
                       <button 
                         onClick={() => { setStartNode(""); setGoalNode(""); setPaths({ Astar: [], BFS: [], DFS: [] }); }}
-                        className="text-[10px] text-slate-400 hover:text-slate-900 underline cursor-pointer ml-2 font-bold"
+                        className="text-[10px] text-slate-400 hover:text-slate-900 dark:text-slate-500 dark:hover:text-white underline cursor-pointer ml-2 font-bold"
                       >
                         Clear Selection
                       </button>
                     </>
                   )}
                 </div>
-              ) : (
-                <div className="text-[11px] text-slate-400 font-medium italic mt-1">
-                  [Click map to select start location]
-                </div>
               )}
               
-              <p className="text-[10px] text-slate-400 font-medium leading-normal mt-1 max-w-md">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-normal mt-1.5 max-w-lg">
                 Define endpoints via map clicks. Trigger animations to analyze expansion paths or run comparative benchmarks.
               </p>
             </div>
@@ -519,8 +530,8 @@ export default function App() {
                 onClick={() => triggerAnimation("Astar")}
                 className={`py-1.5 px-2.5 border rounded text-[11px] font-bold transition-all ${
                   paths.Astar && paths.Astar.length > 0
-                    ? "border-[#1a73e8] text-[#1a73e8] bg-blue-50/20 hover:bg-blue-50/40 cursor-pointer"
-                    : "border-slate-200 bg-slate-50/50 text-slate-400 cursor-not-allowed"
+                    ? "border-[#1a73e8] text-[#1a73e8] bg-blue-50/20 dark:bg-blue-900/10 hover:bg-blue-50/40 dark:hover:bg-blue-900/20 cursor-pointer"
+                    : "border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 dark:text-slate-600 cursor-not-allowed"
                 }`}
               >
                 Animate A*
@@ -530,8 +541,8 @@ export default function App() {
                 onClick={() => triggerAnimation("BFS")}
                 className={`py-1.5 px-2.5 border rounded text-[11px] font-bold transition-all ${
                   paths.BFS && paths.BFS.length > 0
-                    ? "border-[#1e8e3e] text-[#1e8e3e] bg-emerald-50/20 hover:bg-emerald-50/40 cursor-pointer"
-                    : "border-slate-200 bg-slate-50/50 text-slate-400 cursor-not-allowed"
+                    ? "border-[#1e8e3e] text-[#1e8e3e] bg-emerald-50/20 dark:bg-emerald-900/10 hover:bg-emerald-50/40 dark:hover:bg-emerald-900/20 cursor-pointer"
+                    : "border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 dark:text-slate-600 cursor-not-allowed"
                 }`}
               >
                 Animate BFS
@@ -541,8 +552,8 @@ export default function App() {
                 onClick={() => triggerAnimation("DFS")}
                 className={`py-1.5 px-2.5 border rounded text-[11px] font-bold transition-all ${
                   paths.DFS && paths.DFS.length > 0
-                    ? "border-[#f9ab00] text-[#b07800] bg-amber-50/20 hover:bg-amber-50/40 cursor-pointer"
-                    : "border-slate-200 bg-slate-50/50 text-slate-400 cursor-not-allowed"
+                    ? "border-[#f9ab00] text-[#b07800] dark:text-[#f9ab00] bg-amber-50/20 dark:bg-amber-900/10 hover:bg-amber-50/40 dark:hover:bg-amber-900/20 cursor-pointer"
+                    : "border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 text-slate-400 dark:text-slate-600 cursor-not-allowed"
                 }`}
               >
                 Animate DFS
@@ -553,8 +564,8 @@ export default function App() {
                 onClick={triggerBenchmark}
                 className={`py-1.5 px-3 rounded text-[11px] font-bold transition-all flex items-center gap-2 ${
                   benchmarking 
-                    ? "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200" 
-                    : "bg-slate-950 hover:bg-slate-800 text-white cursor-pointer"
+                    ? "bg-slate-100 dark:bg-slate-900 text-slate-400 dark:text-slate-600 cursor-not-allowed border border-slate-200 dark:border-slate-800" 
+                    : "bg-slate-950 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-950 cursor-pointer"
                 }`}
               >
                 {benchmarking ? (
@@ -573,10 +584,10 @@ export default function App() {
 
           {/* Benchmark Results Table */}
           {benchmarkResults ? (
-            <div ref={tableRef} className="border border-slate-200 rounded pt-1 mt-2">
-              <table className="min-w-full text-left text-xs text-slate-600">
+            <div ref={tableRef} className="border border-slate-200 dark:border-slate-800 rounded pt-1 mt-2">
+              <table className="min-w-full text-left text-xs text-slate-600 dark:text-slate-300">
                 <thead>
-                  <tr className="border-b border-slate-200 text-[9px] text-slate-400">
+                  <tr className="border-b border-slate-200 dark:border-slate-800 text-[9px] text-slate-400 dark:text-slate-500">
                     <th className="py-2 px-3">Algorithm</th>
                     <th className="py-2 px-3">Avg Compute Speed</th>
                     <th className="py-2 px-3">Avg Path Cost (Distance)</th>
@@ -584,18 +595,18 @@ export default function App() {
                     <th className="py-2 px-3">Optimality Rating</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
                   {benchmarkResults.map(res => (
-                    <tr key={`benchmark-row-${res.name}`} className="hover:bg-slate-50/30">
-                      <td className="py-2 px-3 text-xs font-bold text-slate-900">{res.name}</td>
+                    <tr key={`benchmark-row-${res.name}`} className="hover:bg-slate-50/30 dark:hover:bg-slate-900/30">
+                      <td className="py-2 px-3 text-xs font-bold text-slate-900 dark:text-white">{res.name}</td>
                       <td className="py-2 px-3 font-mono text-[11px]">{res.avgTime.toFixed(4)} ms</td>
                       <td className="py-2 px-3 font-mono text-[11px]">{res.avgCost.toFixed(2)} m</td>
                       <td className="py-2 px-3 font-mono text-[11px]">{res.avgLength.toFixed(1)} nodes</td>
                       <td className="py-2 px-3">
                         <span className={`text-[9px] py-0.5 px-2 rounded font-bold border ${
-                          res.name === "A*" ? "bg-blue-50/50 text-blue-600 border-blue-100" :
-                          res.name === "BFS" ? "bg-emerald-50/50 text-emerald-600 border-emerald-100" :
-                          "bg-amber-50/50 text-amber-600 border-amber-100"
+                          res.name === "A*" ? "bg-blue-50/50 dark:bg-blue-950/25 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900/30" :
+                          res.name === "BFS" ? "bg-emerald-50/50 dark:bg-emerald-950/25 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30" :
+                          "bg-amber-50/50 dark:bg-amber-950/25 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/30"
                         }`}>
                           {res.name === "A*" ? "Optimal" : res.name === "BFS" ? "Suboptimal" : "Poor"}
                         </span>
@@ -606,8 +617,8 @@ export default function App() {
               </table>
             </div>
           ) : (
-            <div className="py-4 flex flex-col items-center justify-center text-xs text-slate-400">
-              <Clock className="w-4 h-4 text-slate-300 mb-1" />
+            <div className="py-4 flex flex-col items-center justify-center text-xs text-slate-400 dark:text-slate-600">
+              <Clock className="w-4 h-4 text-slate-300 dark:text-slate-700 mb-1" />
               <span className="font-semibold text-[11px]">No benchmark records. Click "Run Benchmark".</span>
             </div>
           )}
@@ -617,7 +628,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="py-3 border-t border-slate-200 bg-white text-center text-[9px] text-slate-400 font-mono tracking-wider flex-shrink-0">
+      <footer className="py-3 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-center text-[9px] text-slate-400 dark:text-slate-600 font-mono tracking-wider flex-shrink-0">
         MIT Campus Routing Dashboard &bull; A* vs BFS vs DFS Comparative Analysis
       </footer>
 
