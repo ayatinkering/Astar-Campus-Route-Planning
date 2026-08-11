@@ -22,6 +22,7 @@ const stripEmojis = (str: string): string => {
 
 export default function App() {
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingError, setLoadingError] = useState<string>("");
   const [nodes, setNodes] = useState<CampusNode[]>([]);
   const [edges, setEdges] = useState<CampusEdge[]>([]);
   const [nodesMap, setNodesMap] = useState<Record<string, CampusNode>>({});
@@ -91,7 +92,9 @@ export default function App() {
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Error connecting to backend API:", err);
+        console.error("Error loading graph:", err);
+        setLoadingError("Failed to load campus graph data. Please verify that backend is running and data is linked.");
+        setLoading(false);
       });
   }, []);
 
@@ -425,9 +428,24 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 text-slate-600">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400">
         <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
         <p className="mt-3 text-sm font-semibold tracking-wide">Loading MIT Campus Map...</p>
+      </div>
+    );
+  }
+
+  if (loadingError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-white dark:bg-slate-950 text-red-600 dark:text-red-400 p-4 text-center font-mono">
+        <span className="text-lg font-bold">Error</span>
+        <p className="mt-2 text-xs text-slate-600 dark:text-slate-400 max-w-md">{loadingError}</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="mt-4 px-4 py-2 bg-slate-950 dark:bg-white text-white dark:text-slate-950 rounded text-xs font-bold hover:bg-slate-800 dark:hover:bg-slate-200 cursor-pointer"
+        >
+          Retry
+        </button>
       </div>
     );
   }

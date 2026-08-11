@@ -22,5 +22,10 @@
       "src": "/(.*)",
       "dest": "dashboard/$1"
     }
-  ]
+  ],
+  "functions": {
+    "api/index.py": {
+      "includeFiles": "data/**"
+    }
+  }
 }
