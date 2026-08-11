@@ -2,6 +2,8 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 body {
   font-family: 'Geist Mono', monospace;
   font-size: 12px;
