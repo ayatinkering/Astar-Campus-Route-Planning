@@ -7,46 +7,52 @@ A campus navigation and route planning system designed for the **Manipal Institu
 
 The diagram below shows the high-level data flow and component interactions from raw files to final visualizations.
 
-```mermaid
-graph TD
-    %% Input Files
-    subgraph Data Layer [Data Layer]
-        A[mit_campus.graphml] -->|Raw Road Network| B(graph_utils.py)
-        C[Academic_Blocks.geojson] -->|Landmark Outlines| B
-        D[Hostels.geojson] -->|Landmark Outlines| B
-        E[Mess.geojson] -->|Landmark Outlines| B
-    end
-
-    %% Processing
-    subgraph Processing Layer [Processing & Mapping Layer]
-        B -->|1. Float Conversion & Clean CC| F[Preprocessed Graph]
-        F -->|2. EPSG:3857 to EPSG:4326 Projection| G[Projected Geometries]
-        G -->|3. Geodesic Nearest-Neighbor Match| H[Labeled Graph: mit_labeled.graphml]
-    end
-
-    %% Pathfinding
-    subgraph Core Layer [Core Routing & Pathfinding]
-        H --> I(pathfinding.py)
-        I -->|A* with Heuristics| J{Routing Algorithms}
-        I -->|Breadth-First Search| J
-        I -->|Depth-First Search| J
-    end
-
-    %% Interfaces
-    subgraph Client Layer [User Interfaces & Benchmarks]
-        J --> K[main.py CLI]
-        J --> L[visualization.py GUI]
-        J --> M[benchmarking.py Runner]
-        L -->|Tk Map Canvas| N[Route Animation & Comparison Panel]
-        M -->|Empirical Runs| O[Performance Metrics & Boxplots]
-    end
-
-    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px;
-    classDef Data Layer fill:#e1f5fe,stroke:#0288d1;
-    classDef Processing Layer fill:#efebe9,stroke:#5d4037;
-    classDef Core Layer fill:#e8f5e9,stroke:#388e3c;
-    classDef Client Layer fill:#f3e5f5,stroke:#7b1fa2;
+```text
++-------------------------------------------------------------------------+
+|                               DATA LAYER                                |
+|                                                                         |
+|  mit_campus.graphml   Hostels.geojson   Academic_Blocks.geojson   Mess  |
++-------------------------------------------------------------------------+
+                                     |
+                                     | (Raw Ingestion)
+                                     v
++-------------------------------------------------------------------------+
+|                       PROCESSING & MAPPING LAYER                        |
+|                                                                         |
+|   +-------------------------+         +-----------------------------+   |
+|   |   Graph Preprocessor    |-------->|  Landmark Geodesic Matcher  |   |
+|   |   - Coordinate cleaning |         |  - Projection (EPSG:4326)   |   |
+|   |   - Extr. Largest CC    |         |  - Nearest-node assignment  |   |
+|   +-------------------------+         +-----------------------------+   |
++-------------------------------------------------------------------------+
+                                     |
+                                     | (mit_labeled.graphml)
+                                     v
++-------------------------------------------------------------------------+
+|                         CORE ROUTING ALGORITHMS                         |
+|                                                                         |
+|     A* Routing           Breadth-First Search       Depth-First Search  |
+|  (Weighted/Heuristic)    (Hop-Count Shortest)       (Randomized Walk)   |
+|  - Euclidean/Manhattan                                                  |
+|  - Dynamic Traffic Sim                                                  |
++-------------------------------------------------------------------------+
+                                     |
+                                     | (Computed Path & Stats)
+                                     v
++-------------------------------------------------------------------------+
+|                             INTERFACE LAYER                             |
+|                                                                         |
+|   +-----------------------+   +-------------------+   +-------------+   |
+|   |        CLI App        |   |    Tk GUI App     |   |  Benchmark  |   |
+|   |     (main.py route)   |   |   (interactive)   |   | (benchmark) |   |
+|   +-----------------------+   +-------------------+   +-------------+   |
+|               |                         |                    |          |
+|               v                         v                    v          |
+|         Route Summary            Path Animation         Performance     |
+|         & Landmark Path          & 3-Panel Plot          Dashboard      |
++-------------------------------------------------------------------------+
 ```
+
 
 
 ## Project Structure
@@ -102,45 +108,6 @@ Astar-Campus-Route-Planning/
    sudo apt-get install python3-tk
    ```
 
-
-## Usage Guide
-
-The unified CLI entrypoint `main.py` provides four core subcommands.
-
-### 1. Label the Graph (`label`)
-Runs the coordinate conversion and nearest-neighbor matching pipeline to label raw graph nodes with real landmarks from GeoJSON data. Saves the processed graph and generates a labeled map image.
-```bash
-python main.py label
-```
-
-### 2. Find a Route Programmatically (`route`)
-Computes the path between two landmarks (e.g. `'B 1'` hostel and `'Library'`).
-- `--start`: Name of start landmark (case-insensitive) or raw node ID.
-- `--goal`: Name of goal landmark or raw node ID.
-- `--algo`: Pathfinding algorithm (`astar`, `bfs`, or `dfs`).
-- `--traffic`: If added, runs A* with congested traffic simulation (inflates edge weights randomly).
-- `--animate`: If added, displays a step-by-step GUI animation of the route traversal.
-```bash
-python main.py route --start "B 1" --goal "Library" --algo astar --animate
-```
-
-### 3. Launch Interactive Map GUI (`interactive`)
-Opens an interactive window of the campus map:
-- **Click 1**: Set Start node (marked in Green).
-- **Click 2**: Set Goal node (marked in Red).
-- Once selected, the system calculates and compares the A*, BFS, and DFS paths, runs a step-by-step navigation animation, and saves a 3-panel comparison chart (`algorithm_comparison.png`).
-```bash
-python main.py interactive
-```
-
-### 4. Run Empirical Benchmarks (`benchmark`)
-Evaluates and benchmarks the execution speed, total distance (cost), and path node length of the three pathfinding algorithms over multiple randomized trials. Saves a 2x2 performance dashboard as `path_length_comparison.png`.
-- `--runs`: The number of random route simulations to run (default: 50).
-```bash
-python main.py benchmark --runs 50
-```
-
----
 
 ## Empirical Pathfinding Analysis
 

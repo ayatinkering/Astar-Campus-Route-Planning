@@ -23,3 +23,5 @@ requests==2.33.1
 shapely==2.1.2
 six==1.17.0
 urllib3==2.6.3
+fastapi==0.111.0
+uvicorn==0.30.1

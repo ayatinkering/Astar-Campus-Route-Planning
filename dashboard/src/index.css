@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+/* Leaflet map container custom styles */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  background-color: #f8fafc;
+  font-family: inherit;
+  z-index: 1;
+}
+
+/* Customize leaflet tooltips to match Google Maps light mode */
+.leaflet-tooltip {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 0.375rem !important;
+  padding: 4px 8px !important;
+  font-size: 11px !important;
+  font-family: monospace !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+}
+
+.leaflet-tooltip-top:before {
+  border-top-color: #0f172a !important;
+}
