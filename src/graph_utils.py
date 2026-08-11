@@ -2,12 +2,8 @@ import os
 import json
 import math
 import networkx as nx
-from pyproj import Transformer
 from geopy.distance import geodesic
 from src.config import SRC_CRS, DST_CRS
-
-# Coordinate converter initialization
-transformer = Transformer.from_crs(SRC_CRS, DST_CRS, always_xy=True)
 
 def convert_coordinates(lon, lat):
     """
@@ -15,6 +11,8 @@ def convert_coordinates(lon, lat):
     the standard WGS84 ranges.
     """
     if abs(lon) > 180 or abs(lat) > 90:
+        from pyproj import Transformer
+        transformer = Transformer.from_crs(SRC_CRS, DST_CRS, always_xy=True)
         lon, lat = transformer.transform(lon, lat)
     return lat, lon
 
