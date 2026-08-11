@@ -265,13 +265,16 @@ export default function App() {
     // Start Landmark marker
     if (startNode && nodesMap[startNode]) {
       const s = nodesMap[startNode];
-      L.circleMarker([s.y, s.x], {
-        radius: 8.5,
-        color: "#1e8e3e", // Google Maps green
-        fillColor: "#ffffff",
-        fillOpacity: 1,
-        weight: 3.5
-      }).addTo(group)
+      const startIcon = L.icon({
+        iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
+        shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
+
+      L.marker([s.y, s.x], { icon: startIcon }).addTo(group)
         .bindTooltip(`Start: ${s.label === "Unknown" ? `Node #${s.id}` : s.label}`, {
           permanent: true,
           direction: "top"
@@ -281,13 +284,16 @@ export default function App() {
     // Goal Destination marker
     if (goalNode && nodesMap[goalNode]) {
       const g = nodesMap[goalNode];
-      L.circleMarker([g.y, g.x], {
-        radius: 8.5,
-        color: "#d93025", // Google Maps red
-        fillColor: "#ffffff",
-        fillOpacity: 1,
-        weight: 3.5
-      }).addTo(group)
+      const goalIcon = L.icon({
+        iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+        shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
+
+      L.marker([g.y, g.x], { icon: goalIcon }).addTo(group)
         .bindTooltip(`Goal: ${g.label === "Unknown" ? `Node #${g.id}` : g.label}`, {
           permanent: true,
           direction: "top"
@@ -520,60 +526,6 @@ export default function App() {
             ref={mapContainerRef} 
             className="w-full h-full rounded-lg"
           ></div>
-
-          {/* OSM Style Right Toolbar */}
-          <div className="absolute top-6 right-6 z-[1000] flex flex-col space-y-2 select-none pointer-events-auto">
-            {/* Zoom Group */}
-            <div className="bg-[#3d3d3d]/90 hover:bg-[#3d3d3d] border border-black/10 rounded shadow flex flex-col text-white">
-              <button 
-                onClick={(e) => { e.stopPropagation(); mapRef.current?.zoomIn(); }} 
-                className="w-[34px] h-[34px] flex items-center justify-center font-bold text-lg hover:bg-black/10 rounded-t border-b border-white/10 cursor-pointer"
-                title="Zoom In"
-              >
-                +
-              </button>
-              <button 
-                onClick={(e) => { e.stopPropagation(); mapRef.current?.zoomOut(); }} 
-                className="w-[34px] h-[34px] flex items-center justify-center font-bold text-lg hover:bg-black/10 rounded-b cursor-pointer"
-                title="Zoom Out"
-              >
-                −
-              </button>
-            </div>
-
-            {/* Locate Me */}
-            <div className="bg-[#3d3d3d]/90 hover:bg-[#3d3d3d] border border-black/10 rounded shadow text-white">
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  mapRef.current?.setView([13.3475, 74.7972], 16);
-                }}
-                className="w-[34px] h-[34px] flex items-center justify-center hover:bg-black/10 rounded cursor-pointer animate-none"
-                title="Campus Center"
-              >
-                <Navigation className="w-4 h-4 rotate-45" />
-              </button>
-            </div>
-
-            {/* Info & Layers Group */}
-            <div className="bg-[#3d3d3d]/90 hover:bg-[#3d3d3d] border border-black/10 rounded shadow flex flex-col text-white">
-              <div className="w-[34px] h-[34px] flex items-center justify-center hover:bg-black/10 rounded-t border-b border-white/10 cursor-pointer text-slate-300 text-xs" title="Layers">
-                🥞
-              </div>
-              <div className="w-[34px] h-[34px] flex items-center justify-center hover:bg-black/10 border-b border-white/10 cursor-pointer text-slate-300 font-serif italic text-sm" title="Map Key">
-                i
-              </div>
-              <div className="w-[34px] h-[34px] flex items-center justify-center hover:bg-black/10 border-b border-white/10 cursor-pointer text-slate-300 text-[10px]" title="Share">
-                🔗
-              </div>
-              <div className="w-[34px] h-[34px] flex items-center justify-center hover:bg-black/10 border-b border-white/10 cursor-pointer text-slate-300 text-[10px]" title="Notes">
-                💬
-              </div>
-              <div className="w-[34px] h-[34px] flex items-center justify-center hover:bg-black/10 rounded-b cursor-pointer text-slate-300 text-sm font-bold" title="Help">
-                ?
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Benchmark & Control Panel */}
