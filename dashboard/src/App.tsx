@@ -459,7 +459,7 @@ export default function App() {
       {/* Header / Navbar */}
       <header className="w-full px-8 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
         <div className="flex items-center space-x-2">
-          <span className="text-lg font-semibold text-slate-900 dark:text-white tracking-tight">MIT Route Planner</span>
+          <span className="text-lg font-semibold text-slate-900 dark:text-white tracking-tight">GraphMIT</span>
         </div>
 
         <nav className="flex items-center space-x-6 text-sm font-bold text-slate-500 dark:text-slate-400">
@@ -652,7 +652,7 @@ export default function App() {
       {/* Footer */}
       <footer className="py-8 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-center text-xs text-slate-400 dark:text-slate-500 font-mono tracking-wider flex-shrink-0">
         <div className="flex flex-col items-center space-y-2">
-          <span>MIT Campus Graph &bull; A* vs BFS vs DFS Comparative Analysis</span>
+          <span>GraphMIT &bull; A* vs BFS vs DFS Comparative Analysis</span>
           <div className="flex items-center space-x-3 text-slate-500 dark:text-slate-400 font-bold">
             <a 
               href="https://github.com/ayatinkering/Astar-Campus-Route-Planning" 

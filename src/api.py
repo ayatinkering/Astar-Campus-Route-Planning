@@ -11,7 +11,7 @@ from src.config import LABELED_GRAPH_PATH, RAW_GRAPH_PATH, GEOJSON_FILES
 from src.graph_utils import load_graph, preprocess_graph, label_nodes_with_geojson
 from src.pathfinding import run_astar, run_bfs, run_dfs, path_cost
 
-app = FastAPI(title="MIT Campus Route Planner API")
+app = FastAPI(title="GraphMIT API")
 
 # Configure CORS Middleware
 app.add_middleware(

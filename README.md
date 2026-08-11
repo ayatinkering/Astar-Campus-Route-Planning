@@ -1,4 +1,4 @@
-# Mit Campus Route Planner
+# GraphMIT
 
 An interactive campus routing and pathfinding dashboard designed for the **Manipal Institute of Technology (MIT) Campus**. 
 

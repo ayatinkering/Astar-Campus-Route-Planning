@@ -79,7 +79,7 @@ def find_node_by_label_or_id(G, label_map, query):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="A* Campus Route Planner - Manipal Institute of Technology (MIT)"
+        description="GraphMIT - A* Campus Route Planner (MIT)"
     )
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
 

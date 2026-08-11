@@ -1,1 +1,1 @@
-# A* Campus Route Planner Package
+# GraphMIT Package
