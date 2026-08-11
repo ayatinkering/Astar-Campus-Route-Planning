@@ -487,7 +487,7 @@ export default function App() {
         <div className="flex flex-col space-y-3 flex-shrink-0">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
                 Map Controls & Benchmark
               </h3>
               

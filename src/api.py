@@ -55,10 +55,8 @@ def init_graph():
         if lbl and lbl != "Unknown":
             label_to_node[lbl.strip().lower()] = node
 
-# Load graph at startup
-@app.on_event("startup")
-def startup_event():
-    init_graph()
+# Load graph immediately on import so it's always ready
+init_graph()
 
 # --- Data Transfer Objects (Pydantic Models) ---
 
