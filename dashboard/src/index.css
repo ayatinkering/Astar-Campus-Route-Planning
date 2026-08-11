@@ -1,11 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap');
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 body {
-  font-family: 'Geist Mono', monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 12px;
 }
 

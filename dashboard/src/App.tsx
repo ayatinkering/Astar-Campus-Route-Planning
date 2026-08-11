@@ -441,10 +441,10 @@ export default function App() {
       {/* Header / Navbar */}
       <header className="w-full px-8 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
         <div className="flex items-center space-x-2">
-          <span className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">MIT Route Planner</span>
+          <span className="text-lg font-semibold text-slate-900 dark:text-white tracking-tight">MIT Route Planner</span>
         </div>
 
-        <nav className="flex items-center space-x-6 text-xs font-bold text-slate-500 dark:text-slate-400">
+        <nav className="flex items-center space-x-6 text-sm font-bold text-slate-500 dark:text-slate-400">
           <a 
             href="https://github.com/ayatinkering/Astar-Campus-Route-Planning" 
             target="_blank" 
@@ -456,15 +456,15 @@ export default function App() {
           <span className="text-slate-300 dark:text-slate-800">|</span>
           <button 
             onClick={() => setDarkMode(!darkMode)}
-            className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white cursor-pointer focus:outline-none"
+            className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white cursor-pointer focus:outline-none flex items-center"
             title="Toggle Theme"
           >
             {darkMode ? (
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-3.5 h-3.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4.5 h-4.5">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707-.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
               </svg>
             ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-3.5 h-3.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4.5 h-4.5">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
               </svg>
             )}
@@ -632,8 +632,20 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="py-3 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-center text-[9px] text-slate-400 dark:text-slate-600 font-mono tracking-wider flex-shrink-0">
-        MIT Campus Routing Dashboard &bull; A* vs BFS vs DFS Comparative Analysis
+      <footer className="py-8 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-center text-xs text-slate-400 dark:text-slate-500 font-mono tracking-wider flex-shrink-0">
+        <div className="flex flex-col items-center space-y-2">
+          <span>MIT Campus Routing Dashboard &bull; A* vs BFS vs DFS Comparative Analysis</span>
+          <div className="flex items-center space-x-3 text-slate-500 dark:text-slate-400 font-bold">
+            <a 
+              href="https://github.com/ayatinkering/Astar-Campus-Route-Planning" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="hover:text-slate-950 dark:hover:text-white underline"
+            >
+              Code (GitHub Repository)
+            </a>
+          </div>
+        </div>
       </footer>
 
     </div>
