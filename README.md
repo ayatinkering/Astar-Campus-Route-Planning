@@ -60,6 +60,51 @@ The following ASCII diagram illustrates the data ingestion pipeline, backend API
 
 ---
 
+## Key Architectural Mechanics
+
+### 1. Hybrid Vercel Serverless Router
+The project deploys as a unified monorepo on Vercel:
+* **Frontend assets**: Compiled from `dashboard/` and served as a static build via Vercel Edge.
+* **Backend routes**: FastAPI functions are deployed as serverless lambda entrypoints in `api/index.py` using `@vercel/python`.
+* **API rewrites**: The root `vercel.json` maps all `/api/*` requests to the python serverless functions while passing through other requests directly to the Vite frontend client.
+
+### 2. Double-Data Folder Bundle & Fallback
+* In local development, the GraphML networks and GeoJSON files are loaded from the root `data/` folder.
+* During serverless deployments, Vercel excludes directories outside of the active function directory. To accommodate this, the data assets are copied inside `api/data/` for compilation.
+* The system configuration automatically falls back to `api/data/` if the root `data/` directory is not resolved at runtime.
+
+### 3. Separation of Production and Local Requirements
+* **Production (`api/requirements.txt`)**: Contains only the core lightweight dependencies needed to execute the FastAPI endpoints (`fastapi`, `pydantic`, `networkx`, `geopy`). This prevents Vercel from compiling heavy packages like GeoPandas or PyProj at build time.
+* **Development (`requirements-dev.txt`)**: Contains the full dependencies (Matplotlib, OSMnx, etc.) needed to run local Tkinter GUIs or execute graph visual generation pipelines.
+
+---
+
+## API Endpoints Reference
+
+### 1. Ingest Graph Data
+* **Endpoint**: `GET /api/graph`
+* **Response**: Returns the node positions (GPS coordinates) and adjacency connections in JSON format.
+
+### 2. Solve Route
+* **Endpoint**: `POST /api/route`
+* **Request Body**:
+  ```json
+  {
+    "start": "SP Workshop",
+    "goal": "Library",
+    "algo": "astar",
+    "heuristic": "euclidean",
+    "traffic": false
+  }
+  ```
+* **Response**: Returns the node traversal path, path cost (geodesic distance in meters), computation runtime, and list of named landmarks encountered.
+
+### 3. Run Benchmark Suite
+* **Endpoint**: `GET /api/benchmark?runs=50`
+* **Response**: Runs `N` randomized test queries across A*, BFS, and DFS and returns comparative average execution speed, average path cost, and average hop count.
+
+---
+
 ## Installation & Running Locally
 
 ### 1. Backend Service Setup (FastAPI)
