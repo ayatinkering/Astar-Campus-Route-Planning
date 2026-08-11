@@ -408,6 +408,14 @@ export default function App() {
   const tableRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
+  useEffect(() => {
     if (benchmarkResults && tableRef.current) {
       setTimeout(() => {
         tableRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -428,11 +436,7 @@ export default function App() {
   const goalLandmark = nodesMap[goalNode];
 
   return (
-    <div className={`min-h-screen flex flex-col font-sans antialiased transition-colors duration-200 ${
-      darkMode 
-        ? "bg-slate-950 text-slate-100 dark" 
-        : "bg-white text-slate-800"
-    }`}>
+    <div className="min-h-screen flex flex-col font-sans antialiased bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-200">
       
       {/* Header / Navbar */}
       <header className="w-full px-8 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
