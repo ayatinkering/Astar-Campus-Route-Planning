@@ -457,24 +457,24 @@ export default function App() {
   const goalLandmark = nodesMap[goalNode];
 
   return (
-    <div className="min-h-screen bg-white text-slate-800 font-sans flex flex-col antialiased">
+    <div className="min-h-screen max-h-screen h-screen bg-white text-slate-800 font-sans flex flex-col antialiased overflow-hidden">
       
       {/* Header / Navbar */}
-      <header className="max-w-5xl w-full mx-auto px-6 py-6 flex items-center justify-between border-b border-dashed border-slate-200">
+      <header className="max-w-5xl w-full mx-auto px-6 py-4 flex items-center justify-between border-b border-dashed border-slate-200 flex-shrink-0">
         <div className="flex items-center space-x-2">
-          <span className="text-2xl font-serif-custom font-bold text-slate-900">MIT Route Planner</span>
+          <span className="text-2xl font-serif-custom font-bold text-slate-900 tracking-tight">MIT Route Planner</span>
         </div>
 
-        <nav className="flex items-center space-x-6 text-sm font-medium text-slate-500">
-          <div className="relative py-1 flex flex-col items-center select-none cursor-pointer">
+        <nav className="flex items-center space-x-6 text-xs font-semibold text-slate-500">
+          <div className="relative py-0.5 flex flex-col items-center select-none cursor-pointer">
             <span className="text-slate-950 font-bold">Home</span>
-            <span className="absolute bottom-[-6px] w-1.5 h-1.5 bg-slate-950 rounded-full"></span>
+            <span className="absolute bottom-[-6px] w-1 h-1 bg-slate-950 rounded-full"></span>
           </div>
           <span className="hover:text-slate-900 transition-colors cursor-pointer">Benchmarks</span>
           <span className="hover:text-slate-900 transition-colors cursor-pointer">Documentation</span>
           <span className="text-slate-300">|</span>
           <span className="text-slate-600 hover:text-slate-900 cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-3.5 h-3.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-3.5 h-3.5">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
             </svg>
           </span>
@@ -482,11 +482,11 @@ export default function App() {
       </header>
 
       {/* Main Single Column Layout */}
-      <main className="flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col space-y-8">
+      <main className="flex-1 max-w-5xl w-full mx-auto px-6 py-4 flex flex-col space-y-4 overflow-hidden min-h-0">
         
         {/* Selection overlay (above the map) */}
-        <div className="flex flex-col space-y-3 py-1">
-          <h2 className="text-2xl font-serif-custom font-bold tracking-tight text-slate-900">
+        <div className="flex flex-col space-y-2 py-0 flex-shrink-0">
+          <h2 className="text-xl font-serif-custom font-bold tracking-tight text-slate-900">
             Route Planner
           </h2>
           
@@ -498,7 +498,7 @@ export default function App() {
                   {startLandmark ? startLandmark.label : "Click a point on the map"}
                 </span>
               </div>
-              <div className="text-slate-300 font-bold text-lg">➔</div>
+              <div className="text-slate-300 font-bold text-base">➔</div>
               <div>
                 <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Goal Destination</span>
                 <span className="font-serif-custom text-slate-900 text-lg font-medium mt-0.5 block">
@@ -509,7 +509,7 @@ export default function App() {
             {(startNode || goalNode) && (
               <button 
                 onClick={() => { setStartNode(""); setGoalNode(""); setPaths({ Astar: [], BFS: [], DFS: [] }); }}
-                className="text-xs hover:text-slate-900 text-slate-400 underline underline-offset-4 decoration-dashed cursor-pointer font-medium"
+                className="text-[11px] hover:text-slate-900 text-slate-400 underline underline-offset-4 decoration-dashed cursor-pointer font-bold"
                 title="Reset Selection"
               >
                 Reset Route
@@ -519,24 +519,24 @@ export default function App() {
         </div>
 
         {/* Detailed Leaflet Map Container */}
-        <div className="border border-slate-200 rounded-lg overflow-hidden h-[500px]">
+        <div className="flex-1 min-h-[250px] border border-slate-200 rounded-lg overflow-hidden relative">
           <div 
             ref={mapContainerRef} 
             className="w-full h-full"
           ></div>
         </div>
 
-        <div className="h-px border-b border-dashed border-slate-200"></div>
+        <div className="h-px border-b border-dashed border-slate-200 flex-shrink-0"></div>
 
         {/* Benchmark & Control Panel */}
-        <div className="flex flex-col space-y-6">
+        <div className="flex flex-col space-y-3 flex-shrink-0 min-h-0">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h3 className="text-2xl font-serif-custom font-bold tracking-tight text-slate-900">
+              <h3 className="text-xl font-serif-custom font-bold tracking-tight text-slate-900">
                 Map Controls & Benchmark
               </h3>
-              <p className="text-xs text-slate-400 mt-1 font-medium max-w-xl leading-relaxed">
-                Click map nodes to define parameters. Use animation overlays to inspect search space expansions or run multi-trial empirical benchmarks.
+              <p className="text-[10px] text-slate-400 font-medium leading-normal max-w-md">
+                Define endpoints via map clicks. Trigger animations to analyze expansion paths or run comparative benchmarks.
               </p>
             </div>
 
@@ -545,7 +545,7 @@ export default function App() {
               <button
                 disabled={!paths.Astar || paths.Astar.length === 0}
                 onClick={() => triggerAnimation("Astar")}
-                className={`py-2 px-3 border rounded-lg text-xs font-bold uppercase transition-all ${
+                className={`py-1.5 px-2.5 border rounded text-[11px] font-bold uppercase transition-all ${
                   paths.Astar && paths.Astar.length > 0
                     ? "border-[#1a73e8] text-[#1a73e8] bg-blue-50/20 hover:bg-blue-50/40 cursor-pointer"
                     : "border-slate-200 bg-slate-50/50 text-slate-400 cursor-not-allowed"
@@ -556,7 +556,7 @@ export default function App() {
               <button
                 disabled={!paths.BFS || paths.BFS.length === 0}
                 onClick={() => triggerAnimation("BFS")}
-                className={`py-2 px-3 border rounded-lg text-xs font-bold uppercase transition-all ${
+                className={`py-1.5 px-2.5 border rounded text-[11px] font-bold uppercase transition-all ${
                   paths.BFS && paths.BFS.length > 0
                     ? "border-[#1e8e3e] text-[#1e8e3e] bg-emerald-50/20 hover:bg-emerald-50/40 cursor-pointer"
                     : "border-slate-200 bg-slate-50/50 text-slate-400 cursor-not-allowed"
@@ -567,7 +567,7 @@ export default function App() {
               <button
                 disabled={!paths.DFS || paths.DFS.length === 0}
                 onClick={() => triggerAnimation("DFS")}
-                className={`py-2 px-3 border rounded-lg text-xs font-bold uppercase transition-all ${
+                className={`py-1.5 px-2.5 border rounded text-[11px] font-bold uppercase transition-all ${
                   paths.DFS && paths.DFS.length > 0
                     ? "border-[#f9ab00] text-[#b07800] bg-amber-50/20 hover:bg-amber-50/40 cursor-pointer"
                     : "border-slate-200 bg-slate-50/50 text-slate-400 cursor-not-allowed"
@@ -581,7 +581,7 @@ export default function App() {
               <button
                 disabled={benchmarking}
                 onClick={triggerBenchmark}
-                className={`py-2 px-4 rounded-lg text-xs font-bold tracking-wide uppercase transition-all flex items-center gap-2 ${
+                className={`py-1.5 px-3 rounded text-[11px] font-bold tracking-wide uppercase transition-all flex items-center gap-2 ${
                   benchmarking 
                     ? "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200" 
                     : "bg-slate-950 hover:bg-slate-800 text-white cursor-pointer"
@@ -603,26 +603,26 @@ export default function App() {
 
           {/* Benchmark Results Table */}
           {benchmarkResults ? (
-            <div className="overflow-x-auto pt-2">
+            <div className="overflow-y-auto max-h-[120px] border border-dashed border-slate-200 rounded pt-1">
               <table className="min-w-full text-left text-xs text-slate-600">
                 <thead>
-                  <tr className="border-b border-dashed border-slate-200 text-[10px] text-slate-400 uppercase tracking-wider">
-                    <th className="py-2.5 px-3">Algorithm</th>
-                    <th className="py-2.5 px-3">Avg Compute Speed</th>
-                    <th className="py-2.5 px-3">Avg Path Cost (Distance)</th>
-                    <th className="py-2.5 px-3">Avg Hops (Nodes)</th>
-                    <th className="py-2.5 px-3">Optimality Rating</th>
+                  <tr className="border-b border-dashed border-slate-200 text-[9px] text-slate-400 uppercase tracking-wider">
+                    <th className="py-1.5 px-3">Algorithm</th>
+                    <th className="py-1.5 px-3">Avg Compute Speed</th>
+                    <th className="py-1.5 px-3">Avg Path Cost (Distance)</th>
+                    <th className="py-1.5 px-3">Avg Hops (Nodes)</th>
+                    <th className="py-1.5 px-3">Optimality Rating</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-dashed divide-slate-100 font-medium">
                   {benchmarkResults.map(res => (
                     <tr key={`benchmark-row-${res.name}`} className="hover:bg-slate-50/30">
-                      <td className="py-3 px-3 font-serif-custom text-sm font-bold text-slate-900">{res.name}</td>
-                      <td className="py-3 px-3 font-mono">{res.avgTime.toFixed(4)} ms</td>
-                      <td className="py-3 px-3 font-mono">{res.avgCost.toFixed(2)} m</td>
-                      <td className="py-3 px-3 font-mono">{res.avgLength.toFixed(1)} nodes</td>
-                      <td className="py-3 px-3">
-                        <span className={`text-[10px] py-0.5 px-2 rounded font-bold border ${
+                      <td className="py-2 px-3 font-serif-custom text-sm font-bold text-slate-900">{res.name}</td>
+                      <td className="py-2 px-3 font-mono text-[11px]">{res.avgTime.toFixed(4)} ms</td>
+                      <td className="py-2 px-3 font-mono text-[11px]">{res.avgCost.toFixed(2)} m</td>
+                      <td className="py-2 px-3 font-mono text-[11px]">{res.avgLength.toFixed(1)} nodes</td>
+                      <td className="py-2 px-3">
+                        <span className={`text-[9px] py-0.5 px-2 rounded font-bold border ${
                           res.name === "A*" ? "bg-blue-50/50 text-blue-600 border-blue-100" :
                           res.name === "BFS" ? "bg-emerald-50/50 text-emerald-600 border-emerald-100" :
                           "bg-amber-50/50 text-amber-600 border-amber-100"
@@ -636,9 +636,9 @@ export default function App() {
               </table>
             </div>
           ) : (
-            <div className="py-8 flex flex-col items-center justify-center text-xs text-slate-400">
-              <Clock className="w-5 h-5 text-slate-300 mb-2" />
-              <span className="font-medium">No benchmark records. Click "Run Benchmark" to fetch performance comparisons.</span>
+            <div className="py-4 flex flex-col items-center justify-center text-xs text-slate-400">
+              <Clock className="w-4 h-4 text-slate-300 mb-1" />
+              <span className="font-semibold text-[11px]">No benchmark records. Click "Run Benchmark".</span>
             </div>
           )}
 
@@ -647,7 +647,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="py-8 border-t border-dashed border-slate-200 bg-white text-center text-[10px] text-slate-400 font-mono tracking-wider">
+      <footer className="py-3 border-t border-dashed border-slate-200 bg-white text-center text-[9px] text-slate-400 font-mono tracking-wider flex-shrink-0">
         MIT Campus Routing Dashboard &bull; A* vs BFS vs DFS Comparative Analysis
       </footer>
 
