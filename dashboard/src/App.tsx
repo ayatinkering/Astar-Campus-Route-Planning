@@ -457,9 +457,9 @@ export default function App() {
     <div className="min-h-screen flex flex-col font-sans antialiased bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-200">
       
       {/* Header / Navbar */}
-      <header className="w-full px-8 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
+      <header className="w-full px-8 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 shrink-0">
         <div className="flex items-center space-x-2">
-          <span className="text-lg font-semibold text-slate-900 dark:text-white tracking-tight">GraphMIT</span>
+          <span className="text-lg font-sbold font-mono text-slate-900 dark:text-white tracking-tight">GraphMIT</span>
         </div>
 
         <nav className="flex items-center space-x-6 text-sm font-bold text-slate-500 dark:text-slate-400">
@@ -650,7 +650,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="py-8 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-center text-xs text-slate-400 dark:text-slate-500 font-mono tracking-wider flex-shrink-0">
+      <footer className="py-8 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-center text-xs text-slate-400 dark:text-slate-500 font-mono tracking-wider shrink-0">
         <div className="flex flex-col items-center space-y-2">
           <span>GraphMIT &bull; A* vs BFS vs DFS Comparative Analysis</span>
           <div className="flex items-center space-x-3 text-slate-500 dark:text-slate-400 font-bold">
@@ -658,9 +658,9 @@ export default function App() {
               href="https://github.com/ayatinkering/Astar-Campus-Route-Planning" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="hover:text-slate-950 dark:hover:text-white underline"
+              className="text-slate-950 dark:text-white hover:underline"
             >
-              Code (GitHub Repository)
+              Code
             </a>
           </div>
         </div>

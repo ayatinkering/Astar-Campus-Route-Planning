@@ -56,7 +56,7 @@ The following ASCII diagram illustrates the data ingestion pipeline, backend API
 * **Backend**: FastAPI, NetworkX, Uvicorn, Python 3
 * **Frontend**: React 19, TypeScript, Vite, Tailwind CSS v4, Leaflet.js
 * **Data Sources**: Spatial GraphML representing road segments, GeoJSON landmarks
-* **Typography**: Clean system monospace font stack (`ui-monospace`, `SFMono-Regular`, `Menlo`, etc.)
+* **Typography**: Universally enforced JetBrains Mono monospace font stack
 
 ---
 
